@@ -94,14 +94,14 @@ function draw(){
   g+=line(85,76,85,124,'var(--temp)',2,'ah-temp');
  }
  g+=box(30,130,110,s.main,k===4);
- g+=T(85,192,"head (main) · at 0x100",13,'var(--muted)');
- g+=node(400,130,"10","0x600",false);g+=T(425,192,"at 0x500",13,'var(--muted)');
- g+=node(560,130,"20","NULL",false);g+=T(585,192,"at 0x600",13,'var(--muted)');
+ g+=T(150,116,"head (main) · at 0x100",13,'var(--muted)','start');
+ g+=node(400,130,"10","0x600",false);g+=T(425,116,"at 0x500",13,'var(--muted)');
+ g+=node(560,130,"20","NULL",false);g+=T(585,116,"at 0x600",13,'var(--muted)');
  g+=line(516,153,555,153,'var(--ink)',1.5,'ah');
  if(s.main==="0x500")g+=line(140,153,395,153,'var(--ink)',1.5,'ah');
  if(s.nn){
   g+=node(220,250,"5",s.nn>=2?"0x500":"?",k===3);g+=T(245,312,"newNode · at 0x900",13,'var(--muted)');
-  if(s.nn>=2)g+=line(303,250,410,181,k===3?'var(--hotline)':'var(--ink)',k===3?2.5:1.5,k===3?'ah-hot':'ah');
+  if(s.nn>=2)g+=line(303,250,412,180,k===3?'var(--hotline)':'var(--ink)',k===3?2.5:1.5,k===3?'ah-hot':'ah');
  }
  if(s.main==="0x900")g+=line(110,176,222,248,k===4?'var(--hotline)':'var(--ink)',k===4?2.5:1.5,k===4?'ah-hot':'ah');
  pic.innerHTML=`<title>${s.title}</title>`+g;
