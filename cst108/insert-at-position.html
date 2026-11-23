@@ -56,7 +56,7 @@ pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
 <div class="dots" id="dots"></div>
 </div>
 <div class="grid">
-<pre id="code"><div>if (position &lt; 1) { ...; return; }</div><div>if (position == 1) { insertAtBeginning(head, value); return; }</div><div>Node* temp = *head;</div><div>for (int i = 1; i &lt; position - 1 &amp;&amp; temp != NULL; i++)</div><div>    temp = temp-&gt;next;</div><div>if (temp == NULL) { ...; return; }</div><div>Node* newNode = malloc(...); newNode-&gt;data = value;</div><div>newNode-&gt;next = temp-&gt;next;</div><div>temp-&gt;next = newNode;</div></pre>
+<pre id="code"><div>insertAtPosition(&amp;head, 25, 3);   // in main</div><div>void insertAtPosition(Node** head, int value, int position) {</div><div>    if (position &lt; 1) { ...; return; }</div><div>    if (position == 1) { insertAtBeginning(head, value); return; }</div><div>    Node* temp = *head;</div><div>    for (int i = 1; i &lt; position - 1 &amp;&amp; temp != NULL; i++)</div><div>        temp = temp-&gt;next;</div><div>    if (temp == NULL) { ...; return; }</div><div>    Node* newNode = malloc(...); newNode-&gt;data = value;</div><div>    newNode-&gt;next = temp-&gt;next;</div><div>    temp-&gt;next = newNode;</div><div>}</div></pre>
 <div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
 </div>
 <div class="rules">
@@ -68,15 +68,16 @@ pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
 <script>
 {
 const steps=[
- {t:-1,i:null,lines:[0,1],title:"Check the special cases",text:"position is 3: not below 1, and not 1, so head will not change. Continue with the general case."},
- {t:0,i:null,lines:[2],title:"temp = *head",text:"temp starts on node 1 (value 10). Goal: stop on node position - 1 = 2, the node BEFORE the new one."},
- {t:0,i:1,lines:[3],title:"i = 1: is 1 < 2? yes",text:"The condition is true (and temp is not NULL), so the loop body runs."},
- {t:1,i:1,lines:[4],title:"temp = temp->next",text:"temp moves to node 2 (value 20). Then i++ makes i = 2."},
- {t:1,i:2,lines:[3],title:"i = 2: is 2 < 2? no",text:"The condition is false, so the loop ends. temp is on node 2, exactly the node before position 3."},
- {t:1,i:2,lines:[5],title:"temp is not NULL",text:"The position is valid (temp would be NULL only if position were larger than length + 1)."},
- {t:1,i:2,lines:[6],nn:true,title:"Create the new node",text:"newNode holds 25. Its next is not set yet, so nothing points to it and it points nowhere."},
- {t:1,i:2,lines:[7],nn:true,a:true,title:"newNode->next = temp->next",text:"temp->next is 20's next, which is the address of 30. Copy it into 25's next: 25 now points to 30. The list itself has not changed yet."},
- {t:1,i:2,lines:[8],nn:true,a:true,b:true,title:"temp->next = newNode",text:"20's next (highlighted) changes from 30 to 25. Now the list is 10 → 20 → 25 → 30 → NULL, and 25 is at position 3."}
+ {t:-1,i:null,lines:[0,1],title:"The call",text:"main calls insertAtPosition(&head, 25, 3). Parameters match in order: head = &head (address of main's head), value = 25, position = 3. So 25 must end up as node 3."},
+ {t:-1,i:null,lines:[2,3],title:"Check the special cases",text:"position is 3: not below 1, and not 1, so head will not change. Continue with the general case."},
+ {t:0,i:null,lines:[4],title:"temp = *head",text:"temp starts on node 1 (value 10). Goal: stop on node position - 1 = 2, the node BEFORE the new one."},
+ {t:0,i:1,lines:[5],title:"i = 1: is 1 < 2? yes",text:"The condition is true (and temp is not NULL), so the loop body runs."},
+ {t:1,i:1,lines:[6],title:"temp = temp->next",text:"temp moves to node 2 (value 20). Then i++ makes i = 2."},
+ {t:1,i:2,lines:[5],title:"i = 2: is 2 < 2? no",text:"The condition is false, so the loop ends. temp is on node 2, exactly the node before position 3."},
+ {t:1,i:2,lines:[7],title:"temp is not NULL",text:"The position is valid (temp would be NULL only if position were larger than length + 1)."},
+ {t:1,i:2,lines:[8],nn:true,title:"Create the new node",text:"newNode holds 25. Its next is not set yet, so nothing points to it and it points nowhere."},
+ {t:1,i:2,lines:[9],nn:true,a:true,title:"newNode->next = temp->next",text:"temp->next is 20's next, which is the address of 30. Copy it into 25's next: 25 now points to 30. The list itself has not changed yet."},
+ {t:1,i:2,lines:[10],nn:true,a:true,b:true,title:"temp->next = newNode",text:"20's next (highlighted) changes from 30 to 25. Now the list is 10 → 20 → 25 → 30 → NULL, and 25 is at position 3."}
 ];
 const X=[110,290,470],V=["10","20","30"],P=["1","2","3"];
 const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
