@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOPIC Stepper</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* Shared look for all study-visuals pages. Keep this block as it is.
+   Compatibility (Obsidian mobile uses an old engine): no light-dark(), no context-stroke,
+   var() colours only inside style="..." in SVG, never in fill=/stroke= attributes. */
+:root{color-scheme:light;--bg:#ffffff;--ink:#0d1222;--muted:#5a6278;--zone:#eef2ff;--line:#c9d2ec;--node:#ffffff;--temp:#5b4fd6;--hot:#fff1d6;--strip:#1240e0;--hotline:#d48a0c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+header{background:var(--strip);color:#fff;padding:18px max(5vw,16px)}
+h1{font:600 clamp(24px,3.4vw,34px)/1.1 "Space Grotesk",Inter,sans-serif;margin:0}
+header p{margin:6px 0 0;opacity:.85;font-size:15px}
+main{max-width:1000px;margin:0 auto;padding:20px max(4vw,16px) 40px}
+.fig{background:var(--zone);border:1px solid var(--line);border-radius:10px;padding:8px}
+.fig svg{display:block;width:100%;height:auto}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+button{font:500 16px Inter,sans-serif;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--node);color:var(--ink);cursor:pointer}
+button.primary{background:var(--strip);border-color:var(--strip);color:#fff}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible{outline:3px solid var(--temp);outline-offset:2px}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--strip)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+pre{margin:0;background:var(--node);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow-x:auto;font:14px/1.7 "JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0}
+pre div{padding:0 14px;white-space:pre;border-left:4px solid transparent}
+pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
+.cap{background:var(--node);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.cap h2{font:600 18px/1.3 "Space Grotesk",Inter,sans-serif;margin:0 0 6px}
+.cap p{margin:0}
+.rules{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-size:15px;color:var(--muted)}
+.rules b{color:var(--ink);font-weight:500}
+@media(max-width:700px){.grid{grid-template-columns:minmax(0,1fr)}.dots{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+<h1>TITLE: the one idea this page shows</h1>
+<p>COURSE CODE Course Name · Topic N. The example used. Use the buttons or ← → keys.</p>
+</header>
+<main>
+<div class="fig"><svg id="pic" viewBox="0 0 680 320" role="img" aria-labelledby="ptitle"><title id="ptitle">Diagram for the current step</title></svg></div>
+<div class="bar">
+<button id="prev">Previous</button>
+<button id="next" class="primary">Next</button>
+<button id="reset">Restart</button>
+<div class="dots" id="dots"></div>
+</div>
+<div class="grid">
+<!-- One <div> per code line. Escape < > & as &lt; &gt; &amp;. Indent with spaces. -->
+<pre id="code"><div>exampleCall(&amp;head, 1);   // in main</div><div>void exampleCall(Node** head, int value) {</div><div>    // line 2</div><div>}</div></pre>
+<div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
+</div>
+<div class="rules">
+<p><b>Key point 1:</b> one short sentence.</p>
+<p><b>Key point 2:</b> one short sentence.</p>
+</div>
+</main>
+<script>
+{
+// One object per step. lines = indexes of #code lines to highlight (0-based).
+// Add any extra fields the drawing needs (e.g. where a pointer is, which cell changed).
+const steps=[
+ {lines:[0],title:"The call",text:"What the caller passes and what each parameter holds."},
+ {lines:[1,2],title:"Next step",text:"What happens and why."}
+];
+const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
+const dots=document.getElementById('dots');
+dots.innerHTML=steps.map(()=>'<span></span>').join('');
+let k=0;
+// Drawing helpers. Colours: --ink text/lines, --node box fill, --temp moving pointer, --hot/--hotline the cell that changes.
+const T=(x,y,t,sz,c,anc,wt)=>`<text x="${x}" y="${y}" text-anchor="${anc||'middle'}" dominant-baseline="central" font-size="${sz||14}" ${wt?'font-weight="500"':''} style="fill:${c||'var(--ink)'}">${t}</text>`;
+const box=(x,y,w,txt,hot)=>`<rect x="${x}" y="${y}" width="${w}" height="46" rx="5" style="fill:${hot?'var(--hot)':'var(--node)'};stroke:${hot?'var(--hotline)':'var(--ink)'}" stroke-width="${hot?2.5:1}"/>`+T(x+w/2,y+23,txt);
+const node=(x,y,v,nx,hot)=>`<rect x="${x}" y="${y}" width="50" height="46" rx="5" style="fill:var(--node);stroke:var(--ink)" stroke-width="1"/>`+T(x+25,y+23,v,18,null,null,1)+box(x+50,y,66,nx,hot);
+const mk=(id,c)=>`<marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" style="fill:${c}"/></marker>`;
+const line=(x1,y1,x2,y2,c,w,m)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c}" stroke-width="${w}" marker-end="url(#${m})"/>`;
+function draw(){
+ const s=steps[k];
+ let g=`<defs>${mk('ah','var(--ink)')}${mk('ah-temp','var(--temp)')}${mk('ah-hot','var(--hotline)')}</defs>`;
+ // Draw this step's picture here, using s.
+ g+=node(150,130,"10","NULL",k===1);
+ pic.innerHTML=`<title>${s.title}</title>`+g;
+ codeLines.forEach((d,n)=>d.classList.toggle('hl',s.lines.includes(n)));
+ document.getElementById('ctitle').textContent=`${k+1}/${steps.length} · ${s.title}`;
+ document.getElementById('ctext').textContent=s.text;
+ [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===k));
+ document.getElementById('prev').disabled=k===0;
+ document.getElementById('next').disabled=k===steps.length-1;
+}
+const go=d=>{k=Math.max(0,Math.min(steps.length-1,k+d));draw();};
+document.getElementById('prev').addEventListener('click',()=>go(-1));
+document.getElementById('next').addEventListener('click',()=>go(1));
+document.getElementById('reset').addEventListener('click',()=>{k=0;draw();});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+draw();
+}
+</script>
+</body>
+</html>
