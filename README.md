@@ -1,6 +1,6 @@
 # study-visuals
 
-Interactive, visual study notes. Each note is one self-contained HTML page, deployed by Vercel and embedded in the Obsidian vault with an iframe.
+Interactive, visual study notes. Live site: https://study-visuals-five.vercel.app Each note is one self-contained HTML page, deployed by Vercel and embedded in the Obsidian vault with an iframe.
 
 ## Structure
 
@@ -20,7 +20,7 @@ Interactive, visual study notes. Each note is one self-contained HTML page, depl
 Paste into a note (replace the path):
 
 ```html
-<iframe src="https://SITE_URL/cst108/insert-at-end.html" width="100%" height="760" style="border:0"></iframe>
+<iframe src="https://study-visuals-five.vercel.app/cst108/insert-at-end.html" width="100%" height="760" style="border:0"></iframe>
 ```
 
 ## Deployment
