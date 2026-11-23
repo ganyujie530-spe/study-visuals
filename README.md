@@ -13,6 +13,7 @@ Interactive, visual study notes. Live site: https://study-visuals-five.vercel.ap
 - Self-contained: CSS and JS inline, no build step, no local images (use inline SVG).
 - Text in English (same as the formal notes).
 - Must work inside an iframe and on a phone; support light and dark mode.
+- Phone Obsidian uses an older browser engine: no `light-dark()` (use plain variables + `@media (prefers-color-scheme: dark)`), no `context-stroke` in SVG markers, and put `var()` colours in SVG `style="..."`, not in `fill=`/`stroke=` attributes.
 - The site is public: never put personal information in it (name, student ID, grades, etc.).
 
 ## Embedding in Obsidian
