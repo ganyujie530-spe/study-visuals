@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>insertAtBeginning Stepper</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* VOICE: clear study aid, exam-note calm
+   IDEA: an engineering datasheet panel that steps through one function
+   PICTURE: main's head, the function's head (Node**) and the list, with addresses
+   COLOUR and TYPE: cobalt strip, white panels, amber for the changed cell; Space Grotesk + Inter
+   LAYOUT: title strip, diagram, controls, code beside caption */
+:root{color-scheme:light;--bg:#ffffff;--ink:#0d1222;--muted:#5a6278;--zone:#eef2ff;--line:#c9d2ec;--node:#ffffff;--temp:#5b4fd6;--hot:#fff1d6;--strip:#1240e0;--hotline:#d48a0c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+header{background:var(--strip);color:#fff;padding:18px max(5vw,16px)}
+h1{font:600 clamp(24px,3.4vw,34px)/1.1 "Space Grotesk",Inter,sans-serif;margin:0}
+header p{margin:6px 0 0;opacity:.85;font-size:15px}
+main{max-width:1000px;margin:0 auto;padding:20px max(4vw,16px) 40px}
+.fig{background:var(--zone);border:1px solid var(--line);border-radius:10px;padding:8px}
+.fig svg{display:block;width:100%;height:auto}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+button{font:500 16px Inter,sans-serif;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--node);color:var(--ink);cursor:pointer}
+button.primary{background:var(--strip);border-color:var(--strip);color:#fff}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible{outline:3px solid var(--temp);outline-offset:2px}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--strip)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+pre{margin:0;background:var(--node);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow-x:auto;font:14px/1.7 "JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0}
+pre div{padding:0 14px;white-space:pre;border-left:4px solid transparent}
+pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
+.cap{background:var(--node);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.cap h2{font:600 18px/1.3 "Space Grotesk",Inter,sans-serif;margin:0 0 6px}
+.cap p{margin:0}
+.rules{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-size:15px;color:var(--muted)}
+.rules b{color:var(--ink);font-weight:500}
+@media(max-width:700px){.grid{grid-template-columns:minmax(0,1fr)}.dots{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+<h1>insertAtBeginning: why Node** head</h1>
+<p>CST108 Programming Practice · Topic 3-2 Linked List. insertAtBeginning(&amp;head, 5) on 10 → 20 → NULL. Addresses like 0x100 are made up for the example. Use the buttons or ← → keys.</p>
+</header>
+<main>
+<div class="fig"><svg id="pic" viewBox="0 0 680 350" role="img" aria-labelledby="ptitle"><title id="ptitle">Diagram for the current step</title></svg></div>
+<div class="bar">
+<button id="prev">Previous</button>
+<button id="next" class="primary">Next</button>
+<button id="reset">Restart</button>
+<div class="dots" id="dots"></div>
+</div>
+<div class="grid">
+<pre id="code"><div>insertAtBeginning(&amp;head, 5);   // in main</div><div>void insertAtBeginning(Node** head, int value) {</div><div>    Node* newNode = (Node*)malloc(sizeof(Node));</div><div>    newNode-&gt;data = value;</div><div>    newNode-&gt;next = *head;</div><div>    *head = newNode;</div><div>}</div></pre>
+<div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
+</div>
+<div class="rules">
+<p><b>Two different heads:</b> the function's head holds the ADDRESS of main's head (0x100). *head is main's head itself, so *head = ... changes main's head.</p>
+<p><b>Why not Node* head:</b> the function would get a copy of main's head; changing the copy does not change main's head, and the new node is lost.</p>
+<p><b>Order matters:</b> newNode-&gt;next = *head first, then *head = newNode. Reversed, *head already points to newNode, so newNode would point to itself.</p>
+<p><b>Empty list:</b> if main's head is NULL, the same code gives newNode-&gt;next = NULL, which is correct. No special case needed.</p>
+</div>
+</main>
+<script>
+{
+const steps=[
+ {fn:false,main:"0x500",nn:0,lines:[0],title:"Before the call",text:"main's head is a variable at address 0x100. It stores 0x500, the address of node 10. main passes &head, which is 0x100."},
+ {fn:true,main:"0x500",nn:0,lines:[1],title:"Enter the function",text:"The parameter head is a new variable that stores 0x100. It points to main's head, not to a node. Its type is Node** because it holds the address of a Node*."},
+ {fn:true,main:"0x500",nn:1,lines:[2,3],title:"Create the new node",text:"malloc gives a node at 0x900 and data becomes 5. Its next is not set yet. Nothing points to it."},
+ {fn:true,main:"0x500",nn:2,lines:[4],title:"newNode->next = *head",text:"*head means: go to 0x100 and read it, which gives 0x500. So 5's next becomes 0x500 and 5 points to 10. main's head has not changed yet."},
+ {fn:true,main:"0x900",nn:3,lines:[5],title:"*head = newNode",text:"Write 0x900 into the box at 0x100, which is main's head. main's head now points to 5. Only this one box changed."},
+ {fn:false,main:"0x900",nn:3,lines:[6],title:"Return to main",text:"The function's head is destroyed, but main's head keeps 0x900. The list is now 5 → 10 → 20 → NULL."}
+];
+const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
+const dots=document.getElementById('dots');
+dots.innerHTML=steps.map(()=>'<span></span>').join('');
+let k=0;
+const T=(x,y,t,sz,c,anc,wt)=>`<text x="${x}" y="${y}" text-anchor="${anc||'middle'}" dominant-baseline="central" font-size="${sz||14}" ${wt?'font-weight="500"':''} style="fill:${c||'var(--ink)'}">${t}</text>`;
+const box=(x,y,w,txt,hot,stroke)=>`<rect x="${x}" y="${y}" width="${w}" height="46" rx="5" style="fill:${hot?'var(--hot)':'var(--node)'};stroke:${hot?'var(--hotline)':(stroke||'var(--ink)')}" stroke-width="${hot?2.5:1}"/>`+T(x+w/2,y+23,txt,14);
+const node=(x,y,v,nx,hot)=>`<rect x="${x}" y="${y}" width="50" height="46" rx="5" style="fill:var(--node);stroke:var(--ink)" stroke-width="1"/>`+T(x+25,y+23,v,18,null,null,1)+box(x+50,y,66,nx,hot);
+const mk=(id,c)=>`<marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" style="fill:${c}"/></marker>`;
+const line=(x1,y1,x2,y2,c,w,m)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c}" stroke-width="${w}" marker-end="url(#${m})"/>`;
+function draw(){
+ const s=steps[k];
+ let g=`<defs>${mk('ah','var(--ink)')}${mk('ah-temp','var(--temp)')}${mk('ah-hot','var(--hotline)')}</defs>`;
+ if(s.fn){
+  g+=box(30,30,110,"0x100",false,'var(--temp)');
+  g+=T(150,53,"head (function) · type Node**",13,'var(--temp)','start',1);
+  g+=line(85,76,85,124,'var(--temp)',2,'ah-temp');
+ }
+ g+=box(30,130,110,s.main,k===4);
+ g+=T(85,192,"head (main) · at 0x100",13,'var(--muted)');
+ g+=node(400,130,"10","0x600",false);g+=T(425,192,"at 0x500",13,'var(--muted)');
+ g+=node(560,130,"20","NULL",false);g+=T(585,192,"at 0x600",13,'var(--muted)');
+ g+=line(516,153,555,153,'var(--ink)',1.5,'ah');
+ if(s.main==="0x500")g+=line(140,153,395,153,'var(--ink)',1.5,'ah');
+ if(s.nn){
+  g+=node(220,250,"5",s.nn>=2?"0x500":"?",k===3);g+=T(245,312,"newNode · at 0x900",13,'var(--muted)');
+  if(s.nn>=2)g+=line(303,250,410,181,k===3?'var(--hotline)':'var(--ink)',k===3?2.5:1.5,k===3?'ah-hot':'ah');
+ }
+ if(s.main==="0x900")g+=line(110,176,222,248,k===4?'var(--hotline)':'var(--ink)',k===4?2.5:1.5,k===4?'ah-hot':'ah');
+ pic.innerHTML=`<title>${s.title}</title>`+g;
+ codeLines.forEach((d,n)=>d.classList.toggle('hl',s.lines.includes(n)));
+ document.getElementById('ctitle').textContent=`${k+1}/${steps.length} · ${s.title}`;
+ document.getElementById('ctext').textContent=s.text;
+ [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===k));
+ document.getElementById('prev').disabled=k===0;
+ document.getElementById('next').disabled=k===steps.length-1;
+}
+const go=d=>{k=Math.max(0,Math.min(steps.length-1,k+d));draw();};
+document.getElementById('prev').addEventListener('click',()=>go(-1));
+document.getElementById('next').addEventListener('click',()=>go(1));
+document.getElementById('reset').addEventListener('click',()=>{k=0;draw();});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+draw();
+}
+</script>
+</body>
+</html>
