@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strong Induction: Triangulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* Shared look for all study-visuals pages. Keep this block as it is.
+   Compatibility (Obsidian mobile uses an old engine): no light-dark(), no context-stroke,
+   var() colours only inside style="..." in SVG, never in fill=/stroke= attributes. */
+:root{color-scheme:light;--bg:#ffffff;--ink:#0d1222;--muted:#5a6278;--zone:#eef2ff;--line:#c9d2ec;--node:#ffffff;--temp:#5b4fd6;--hot:#fff1d6;--strip:#1240e0;--hotline:#d48a0c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+header{background:var(--strip);color:#fff;padding:18px max(5vw,16px)}
+h1{font:600 clamp(24px,3.4vw,34px)/1.1 "Space Grotesk",Inter,sans-serif;margin:0}
+header p{margin:6px 0 0;opacity:.85;font-size:15px}
+main{max-width:1000px;margin:0 auto;padding:20px max(4vw,16px) 40px}
+.fig{background:var(--zone);border:1px solid var(--line);border-radius:10px;padding:8px}
+.fig svg{display:block;width:100%;height:auto}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+button{font:500 16px Inter,sans-serif;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--node);color:var(--ink);cursor:pointer}
+button.primary{background:var(--strip);border-color:var(--strip);color:#fff}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible{outline:3px solid var(--temp);outline-offset:2px}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--strip)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+pre{margin:0;background:var(--node);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow-x:auto;font:14px/1.7 "JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0}
+pre div{padding:0 14px;white-space:pre;border-left:4px solid transparent}
+pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
+.cap{background:var(--node);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.cap h2{font:600 18px/1.3 "Space Grotesk",Inter,sans-serif;margin:0 0 6px}
+.cap p{margin:0}
+.rules{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-size:15px;color:var(--muted)}
+.rules b{color:var(--ink);font-weight:500}
+@media(max-width:700px){.grid{grid-template-columns:minmax(0,1fr)}.dots{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+<h1>Strong induction: a polygon with n sides splits into n − 2 triangles</h1>
+<p>BSC129 Discrete Mathematics · Topic 4 Induction, Week 8 slide 17. Example: a hexagon, n = k + 1 = 6. Use the buttons or ← → keys.</p>
+</header>
+<main>
+<div class="fig"><svg id="pic" viewBox="0 0 680 370" role="img" aria-labelledby="ptitle"><title id="ptitle">Diagram for the current step</title></svg></div>
+<div class="bar">
+<button id="prev">Previous</button>
+<button id="next" class="primary">Next</button>
+<button id="reset">Restart</button>
+<div class="dots" id="dots"></div>
+</div>
+<div class="grid">
+<pre id="code"><div>P(n): a simple n-gon splits into n-2 triangles</div><div>Basis: P(3): a triangle is 1 = 3-2 triangle.</div><div>Assume P(3), P(4), ..., P(k) all true, k ≥ 3.</div><div>Take a (k+1)-gon. It has an interior diagonal.</div><div>The diagonal cuts it into an s-gon and a t-gon,</div><div>  s + t = (k+1) + 2,  so 3 ≤ s, t ≤ k.</div><div>By the hypothesis: s-2 and t-2 triangles.</div><div>Total: (s-2)+(t-2) = s+t-4 = k-1 = (k+1)-2.</div><div>By strong induction, P(n) for all n ≥ 3.</div></pre>
+<div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
+</div>
+<div class="rules">
+<p><b>The key count, s + t = n + 2:</b> the diagonal is a side of both pieces, so it is counted twice.</p>
+<p><b>Why strong induction:</b> the pieces can have any number of sides from 3 to k (a hexagon gives 4 + 4 or 3 + 5), not only k.</p>
+<p><b>Show the pieces are in range:</b> each piece has at least 3 sides, so the other has at most k; write 3 ≤ s, t ≤ k.</p>
+<p><b>Quoted fact:</b> every simple polygon with at least 4 sides has an interior diagonal. Use it, do not prove it.</p>
+</div>
+</main>
+<script>
+{
+const P={A:[130,110],B:[260,58],C:[372,132],D:[360,262],E:[226,322],F:[104,236]};
+const HEX=['A','B','C','D','E','F'];
+// pieces: [vertices, colourIndex]; diag: diagonals to draw (amber = the cut); info: lines for the side panel
+const steps=[
+ {lines:[0],hex:'plain',pieces:[],cut:null,tri:[],mini:false,info:['n = 6 sides','goal: 6 − 2 = 4 triangles'],title:"The question",text:"A hexagon has 6 sides. The claim says it can be cut by non-crossing diagonals into 6 − 2 = 4 triangles. Why?"},
+ {lines:[1],hex:'none',pieces:[],cut:null,tri:[],mini:'basis',info:['P(3): 3 − 2 = 1','a triangle is already','1 triangle'],title:"Basis step: n = 3",text:"The smallest polygon is a triangle. It is already 1 triangle, and 3 − 2 = 1, so P(3) is true."},
+ {lines:[2],hex:'hot',pieces:[],cut:null,tri:[],mini:'all',info:['known (hypothesis):','3 sides → 1 triangle','4 sides → 2 triangles','5 sides → 3 triangles'],title:"Strong hypothesis (k = 5)",text:"Assume every polygon with 3, 4 or 5 sides can already be cut into (sides − 2) triangles. Now prove it for the hexagon, k + 1 = 6."},
+ {lines:[3,4],hex:'plain',pieces:[[['A','B','C','D'],0],[['A','D','E','F'],1]],cut:['A','D'],tri:[],mini:false,info:['cut along diagonal AD','piece 1: ABCD','piece 2: ADEF'],title:"Draw one interior diagonal",text:"Any polygon with at least 4 sides has a diagonal lying inside it. Cutting along AD gives two smaller polygons."},
+ {lines:[5],hex:'plain',pieces:[[['A','B','C','D'],0],[['A','D','E','F'],1]],cut:['A','D'],tri:[],mini:false,sides:true,info:['s = 4,  t = 4','s + t = 8 = 6 + 2','AD counted twice','3 ≤ 4 ≤ 5: in range'],title:"Count the sides: s + t = n + 2",text:"Piece ABCD has 4 sides, piece ADEF has 4 sides. 4 + 4 = 8 = 6 + 2, because AD is a side of both pieces. Both have between 3 and 5 sides, so the hypothesis covers them."},
+ {lines:[6],hex:'plain',pieces:[],cut:['A','D'],tri:[[['A','B','C'],0],[['A','C','D'],0],[['A','D','E'],1],[['A','E','F'],1]],inner:[['A','C'],['A','E']],mini:false,info:['ABCD: 4 − 2 = 2 triangles','ADEF: 4 − 2 = 2 triangles'],title:"Use the hypothesis on each piece",text:"By P(4), each quadrilateral splits into 4 − 2 = 2 triangles (here by AC and AE)."},
+ {lines:[7],hex:'plain',pieces:[],cut:['A','D'],tri:[[['A','B','C'],0],[['A','C','D'],0],[['A','D','E'],1],[['A','E','F'],1]],inner:[['A','C'],['A','E']],mini:false,info:['2 + 2 = 4 triangles','(s−2)+(t−2) = 8 − 4 = 4','= 6 − 2  ✓'],title:"Add them up",text:"2 + 2 = 4 triangles, which is exactly 6 − 2. In general: (s − 2) + (t − 2) = (s + t) − 4 = (n + 2) − 4 = n − 2."},
+ {lines:[4,5,6,7],hex:'plain',pieces:[],cut:['B','D'],tri:[[['B','C','D'],1],[['A','B','D'],0],[['A','D','E'],0],[['A','E','F'],0]],inner:[['A','D'],['A','E']],mini:false,info:['cut along BD instead','triangle BCD: s = 3 → 1','pentagon ABDEF: t = 5 → 3','3 + 5 = 8,  1 + 3 = 4  ✓'],title:"Another cut gives 3 + 5 sides",text:"Cutting along BD gives a triangle and a pentagon. The pieces have 3 and 5 sides, not just 5. That is why the hypothesis must cover every size from 3 to k: strong induction."},
+ {lines:[8],hex:'known',pieces:[],cut:null,tri:[[['B','C','D'],1],[['A','B','D'],0],[['A','D','E'],0],[['A','E','F'],0]],inner:[['A','D'],['A','E'],['B','D']],mini:false,info:['every cut works:','pieces are smaller,','hypothesis covers them,','total is always n − 2'],title:"Conclusion",text:"Whatever diagonal we cut along, both pieces are smaller and covered by the hypothesis, and the triangles always add up to n − 2. By strong induction, P(n) holds for all n ≥ 3."}
+];
+const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
+const dots=document.getElementById('dots');
+dots.innerHTML=steps.map(()=>'<span></span>').join('');
+let k=0;
+const T=(x,y,t,sz,c,anc,wt)=>`<text x="${x}" y="${y}" text-anchor="${anc||'middle'}" dominant-baseline="central" font-size="${sz||14}" ${wt?'font-weight="500"':''} style="fill:${c||'var(--ink)'}">${t}</text>`;
+const pts=vs=>vs.map(v=>P[v].join(',')).join(' ');
+const fills=['fill:var(--strip);fill-opacity:.16','fill:var(--temp);fill-opacity:.28'];
+const poly=(vs,style,sw)=>`<polygon points="${pts(vs)}" style="${style}" stroke-width="${sw||1.5}" stroke-linejoin="round"/>`;
+const seg=(a,b,c,w,dash)=>`<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}" style="stroke:${c}" stroke-width="${w}" ${dash?'stroke-dasharray="6 5"':''} stroke-linecap="round"/>`;
+const ctr=[235,190];
+function labels(){return HEX.map(v=>{const [x,y]=P[v],dx=x-ctr[0],dy=y-ctr[1],l=Math.hypot(dx,dy);return T(x+dx/l*20,y+dy/l*20,v,15,'var(--ink)',null,1);}).join('');}
+function mini(kind){
+ let g='';
+ if(kind==='basis'){
+  g+=`<polygon points="150,280 320,280 235,110" style="fill:var(--strip);fill-opacity:.85;stroke:var(--strip)" stroke-width="1.5"/>`+T(235,220,'1',22,'#ffffff',null,1);
+  return g;
+ }
+ return '';
+}
+function sidePanel(lines,y0){return lines.map((t,i)=>T(450,y0+i*26,t,15,i===0?'var(--ink)':'var(--muted)','start',i===0?1:0)).join('');}
+function draw(){
+ const s=steps[k];
+ let g='';
+ if(s.mini==='basis'){g+=mini('basis');}
+ if(s.hex!=='none'){
+  const hs={plain:'fill:var(--node);stroke:var(--ink)',hot:'fill:var(--hot);stroke:var(--hotline)',known:'fill:none;stroke:var(--ink)'}[s.hex];
+  g+=poly(HEX,hs,s.hex==='hot'?3:1.8);
+  for(const [vs,c] of s.pieces)g+=poly(vs,fills[c]+';stroke:none',0);
+  for(const [vs,c] of s.tri)g+=poly(vs,fills[c]+';stroke:none',0);
+  for(const [a,b] of (s.inner||[]))g+=seg(a,b,'var(--ink)',1.5,true);
+  g+=poly(HEX,'fill:none;stroke:var(--ink)',1.8);
+  if(s.cut)g+=seg(s.cut[0],s.cut[1],'var(--hotline)',4);
+  g+=labels();
+  if(s.sides){
+   const mids=[['A','B'],['B','C'],['C','D'],['D','E'],['E','F'],['F','A']];
+   const num=['1','2','3','1','2','3'];
+   mids.forEach(([a,b],i)=>{const x=(P[a][0]+P[b][0])/2,y=(P[a][1]+P[b][1])/2,dx=x-ctr[0],dy=y-ctr[1],l=Math.hypot(dx,dy);g+=T(x+dx/l*16,y+dy/l*16,num[i],13,i<3?'var(--strip)':'var(--temp)',null,1);});
+   g+=T(262,170,'4',13,'var(--hotline)',null,1)+T(232,214,'4',13,'var(--hotline)',null,1);
+  }
+ }
+ g+=sidePanel(s.info,s.mini==='all'?60:70);
+ if(s.mini==='all'){
+  g+=`<polygon points="460,212 500,212 480,180" style="fill:var(--strip);fill-opacity:.85;stroke:var(--strip)" stroke-width="1.2"/>`;
+  g+=`<polygon points="530,180 570,180 570,212 530,212" style="fill:var(--strip);fill-opacity:.85;stroke:var(--strip)" stroke-width="1.2"/><line x1="530" y1="212" x2="570" y2="180" style="stroke:#ffffff" stroke-width="1.2"/>`;
+  g+=`<polygon points="620,176 642,192 634,214 606,214 598,192" style="fill:var(--strip);fill-opacity:.85;stroke:var(--strip)" stroke-width="1.2"/><line x1="620" y1="176" x2="606" y2="214" style="stroke:#ffffff" stroke-width="1.2"/><line x1="620" y1="176" x2="634" y2="214" style="stroke:#ffffff" stroke-width="1.2"/>`;
+  g+=T(480,236,'1',13,'var(--muted)')+T(550,236,'2',13,'var(--muted)')+T(620,236,'3',13,'var(--muted)');
+  g+=T(450,270,'triangles each',13,'var(--muted)','start');
+ }
+ pic.innerHTML=`<title>${s.title}</title>`+g;
+ codeLines.forEach((d,n)=>d.classList.toggle('hl',s.lines.includes(n)));
+ document.getElementById('ctitle').textContent=`${k+1}/${steps.length} · ${s.title}`;
+ document.getElementById('ctext').textContent=s.text;
+ [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===k));
+ document.getElementById('prev').disabled=k===0;
+ document.getElementById('next').disabled=k===steps.length-1;
+}
+const go=d=>{k=Math.max(0,Math.min(steps.length-1,k+d));draw();};
+document.getElementById('prev').addEventListener('click',()=>go(-1));
+document.getElementById('next').addEventListener('click',()=>go(1));
+document.getElementById('reset').addEventListener('click',()=>{k=0;draw();});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+draw();
+}
+</script>
+</body>
+</html>

@@ -45,7 +45,8 @@ const courses=[
  ]},
  {name:"BSC129 Discrete Mathematics",notes:[
   {href:"bsc129/strong-induction-prime-factors.html",title:"Strong induction: every n > 1 is a product of primes",sub:"Topic 4 · why k+1 = a · b needs all of P(2) ... P(k), example 12 = 3 · 4"},
-  {href:"bsc129/strong-induction-postage.html",title:"Strong induction: postage with 4c and 5c stamps",sub:"Topic 4 · four columns growing by +4, why the basis has 4 cases and k ≥ 15"}
+  {href:"bsc129/strong-induction-postage.html",title:"Strong induction: postage with 4c and 5c stamps",sub:"Topic 4 · four columns growing by +4, why the basis has 4 cases and k ≥ 15"},
+  {href:"bsc129/strong-induction-triangulation.html",title:"Strong induction: a polygon splits into n − 2 triangles",sub:"Topic 4 · cut along a diagonal, s + t = n + 2, pieces of any smaller size"}
  ]}
 ];
 document.getElementById('list').innerHTML=courses.map(c=>`<h2>${c.name}</h2><ul>${c.notes.map(n=>`<li><a href="${n.href}"><b>${n.title}</b><span>${n.sub}</span></a></li>`).join('')}</ul>`).join('');
