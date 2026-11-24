@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strong Induction: Prime Factors</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* Shared look for all study-visuals pages. Keep this block as it is.
+   Compatibility (Obsidian mobile uses an old engine): no light-dark(), no context-stroke,
+   var() colours only inside style="..." in SVG, never in fill=/stroke= attributes. */
+:root{color-scheme:light;--bg:#ffffff;--ink:#0d1222;--muted:#5a6278;--zone:#eef2ff;--line:#c9d2ec;--node:#ffffff;--temp:#5b4fd6;--hot:#fff1d6;--strip:#1240e0;--hotline:#d48a0c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+header{background:var(--strip);color:#fff;padding:18px max(5vw,16px)}
+h1{font:600 clamp(24px,3.4vw,34px)/1.1 "Space Grotesk",Inter,sans-serif;margin:0}
+header p{margin:6px 0 0;opacity:.85;font-size:15px}
+main{max-width:1000px;margin:0 auto;padding:20px max(4vw,16px) 40px}
+.fig{background:var(--zone);border:1px solid var(--line);border-radius:10px;padding:8px}
+.fig svg{display:block;width:100%;height:auto}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+button{font:500 16px Inter,sans-serif;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--node);color:var(--ink);cursor:pointer}
+button.primary{background:var(--strip);border-color:var(--strip);color:#fff}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible{outline:3px solid var(--temp);outline-offset:2px}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--strip)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+pre{margin:0;background:var(--node);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow-x:auto;font:14px/1.7 "JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0}
+pre div{padding:0 14px;white-space:pre;border-left:4px solid transparent}
+pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
+.cap{background:var(--node);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.cap h2{font:600 18px/1.3 "Space Grotesk",Inter,sans-serif;margin:0 0 6px}
+.cap p{margin:0}
+.rules{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-size:15px;color:var(--muted)}
+.rules b{color:var(--ink);font-weight:500}
+@media(max-width:700px){.grid{grid-template-columns:minmax(0,1fr)}.dots{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+<h1>Strong induction: why every n &gt; 1 splits into primes</h1>
+<p>BSC129 Discrete Mathematics · Topic 4 Induction, Week 8 slide 14 (Fundamental theorem of arithmetic). Example: k + 1 = 12. Use the buttons or ← → keys.</p>
+</header>
+<main>
+<div class="fig"><svg id="pic" viewBox="0 0 680 320" role="img" aria-labelledby="ptitle"><title id="ptitle">Diagram for the current step</title></svg></div>
+<div class="bar">
+<button id="prev">Previous</button>
+<button id="next" class="primary">Next</button>
+<button id="reset">Restart</button>
+<div class="dots" id="dots"></div>
+</div>
+<div class="grid">
+<pre id="code"><div>P(n): n is a prime or a product of primes   (n ≥ 2)</div><div>Basis: P(2) is true, since 2 is prime.</div><div>Assume P(2), P(3), ..., P(k) are ALL true.</div><div>Show P(k+1):</div><div>  Case 1: k+1 is prime. Done.</div><div>  Case 2: k+1 = a · b, with 2 ≤ a ≤ b ≤ k.</div><div>    By the hypothesis, a and b are primes</div><div>    or products of primes,</div><div>    so k+1 = a · b is a product of primes.</div><div>By strong induction, P(n) holds for all n ≥ 2.</div></pre>
+<div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
+</div>
+<div class="rules">
+<p><b>Why strong induction:</b> 12 = 3 · 4 uses 3 and 4, not 11. Ordinary induction only gives P(k); strong induction gives every P(2) ... P(k).</p>
+<p><b>Always split into two cases:</b> k+1 is prime, or k+1 = a · b. An answer with only one case is incomplete.</p>
+<p><b>Say why the hypothesis applies:</b> write 2 ≤ a ≤ b ≤ k, so a and b are inside the range the hypothesis covers.</p>
+<p><b>Existence only:</b> this proof shows a factorisation exists; that it is unique is a separate proof.</p>
+</div>
+</main>
+<script>
+{
+// row: numbers 2..13. known = numbers already covered (filled). hot = the number being proved.
+// use = numbers the hypothesis is applied to (purple outline). tree = factor tree stage (0 none .. 3 full).
+const steps=[
+ {lines:[0],known:[],hot:null,use:[],tree:0,eq:"",title:"What we want to prove",text:"Every integer from 2 upwards is either prime or a product of primes. The row shows 2 to 13; none is proved yet."},
+ {lines:[1],known:[2],hot:null,use:[],tree:0,eq:"",title:"Basis step: n = 2",text:"2 is prime, so P(2) is true. The induction starts at 2, not 1, because the statement is about integers greater than 1."},
+ {lines:[2,3],known:[2,3,4,5,6,7,8,9,10,11],hot:12,use:[],tree:0,eq:"",title:"Strong hypothesis (here k = 11)",text:"Assume every number from 2 to k is already known to be prime or a product of primes: the whole filled block, not only 11. Now prove the next one, k + 1 = 12."},
+ {lines:[5],known:[2,3,4,5,6,7,8,9,10,11],hot:12,use:[3,4],tree:1,eq:"12 = 3 · 4",title:"Case 2: 12 is not prime",text:"12 = 3 · 4. Both factors are at least 2 and smaller than 12, so they lie in the filled block 2 to 11."},
+ {lines:[6,7],known:[2,3,4,5,6,7,8,9,10,11],hot:12,use:[3,4],tree:2,eq:"3 prime, 4 = 2 · 2",title:"Use the hypothesis on 3 and 4",text:"The hypothesis already tells us: 3 is prime, and 4 = 2 · 2. Neither fact comes from P(11); that is why we need all of P(2) ... P(11)."},
+ {lines:[8],known:[2,3,4,5,6,7,8,9,10,11,12],hot:null,use:[],tree:3,eq:"12 = 2 · 2 · 3",title:"So 12 is a product of primes",text:"Multiply the pieces: 12 = 2 · 2 · 3. P(12) is true, so 12 joins the filled block."},
+ {lines:[2,3,4],known:[2,3,4,5,6,7,8,9,10,11,12,13],hot:13,use:[],tree:0,eq:"",title:"Case 1: the next one, 13, is prime",text:"Now k = 12 and k + 1 = 13. 13 is prime, so P(13) is true at once; nothing needs splitting."},
+ {lines:[9],known:[2,3,4,5,6,7,8,9,10,11,12,13],hot:null,use:[],tree:0,eq:"",title:"Conclusion",text:"Each new number is either prime (case 1) or splits into smaller numbers that are already covered (case 2). By strong induction, P(n) holds for every n ≥ 2."}
+];
+const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
+const dots=document.getElementById('dots');
+dots.innerHTML=steps.map(()=>'<span></span>').join('');
+let k=0;
+const T=(x,y,t,sz,c,anc,wt)=>`<text x="${x}" y="${y}" text-anchor="${anc||'middle'}" dominant-baseline="central" font-size="${sz||14}" ${wt?'font-weight="500"':''} style="fill:${c||'var(--ink)'}">${t}</text>`;
+const mk=(id,c)=>`<marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" style="fill:${c}"/></marker>`;
+const line=(x1,y1,x2,y2,c,w,m)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c}" stroke-width="${w}" marker-end="url(#${m})"/>`;
+const cell=(x,y,w,h,txt,mode)=>{
+ const st={plain:'fill:var(--node);stroke:var(--line)',known:'fill:var(--strip);stroke:var(--strip)',hot:'fill:var(--hot);stroke:var(--hotline)',use:'fill:var(--strip);stroke:var(--temp)'}[mode];
+ const sw=mode==='hot'?2.5:mode==='use'?3.5:1;
+ const tc=mode==='known'||mode==='use'?'#ffffff':mode==='plain'?'var(--muted)':'var(--ink)';
+ return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" style="${st}" stroke-width="${sw}"/>`+T(x+w/2,y+h/2,txt,16,tc,null,1);
+};
+const cx=n=>40+(n-2)*50+22;
+function draw(){
+ const s=steps[k];
+ let g=`<defs>${mk('ah','var(--ink)')}${mk('ah-temp','var(--temp)')}</defs>`;
+ for(let n=2;n<=13;n++){
+  const mode=s.use.includes(n)?'use':n===s.hot?'hot':s.known.includes(n)?'known':'plain';
+  g+=cell(40+(n-2)*50,24,44,40,n,mode);
+ }
+ g+=`<rect x="40" y="82" width="14" height="14" rx="3" style="fill:var(--strip)"/>`+T(60,89,'known (hypothesis)',13,'var(--muted)','start');
+ g+=`<rect x="220" y="82" width="14" height="14" rx="3" style="fill:var(--hot);stroke:var(--hotline)" stroke-width="2"/>`+T(240,89,'proving now',13,'var(--muted)','start');
+ g+=`<rect x="360" y="82" width="14" height="14" rx="3" style="fill:var(--strip);stroke:var(--temp)" stroke-width="3"/>`+T(380,89,'used by the hypothesis',13,'var(--muted)','start');
+ if(s.tree>=1){
+  g+=cell(310,124,60,40,12,s.tree===3?'known':'hot');
+  g+=line(326,164,284,198,'var(--ink)',1.5,'ah')+line(354,164,396,198,'var(--ink)',1.5,'ah');
+  g+=cell(240,202,60,40,3,s.tree===3?'known':'use');
+  g+=cell(380,202,60,40,4,s.tree===3?'known':'use');
+ }
+ if(s.tree>=2){
+  g+=line(398,242,376,268,'var(--ink)',1.5,'ah')+line(422,242,444,268,'var(--ink)',1.5,'ah');
+  g+=cell(340,272,56,36,2,'known')+cell(424,272,56,36,2,'known');
+ }
+ if(s.eq)g+=T(570,190,s.eq,18,'var(--ink)','middle',1);
+ if(s.hot===13&&s.tree===0)g+=T(cx(13),140,'prime',16,'var(--hotline)','middle',1)+line(cx(13),126,cx(13),70,'var(--hotline)',1.5,'ah');
+ pic.innerHTML=`<title>${s.title}</title>`+g;
+ codeLines.forEach((d,n)=>d.classList.toggle('hl',s.lines.includes(n)));
+ document.getElementById('ctitle').textContent=`${k+1}/${steps.length} · ${s.title}`;
+ document.getElementById('ctext').textContent=s.text;
+ [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===k));
+ document.getElementById('prev').disabled=k===0;
+ document.getElementById('next').disabled=k===steps.length-1;
+}
+const go=d=>{k=Math.max(0,Math.min(steps.length-1,k+d));draw();};
+document.getElementById('prev').addEventListener('click',()=>go(-1));
+document.getElementById('next').addEventListener('click',()=>go(1));
+document.getElementById('reset').addEventListener('click',()=>{k=0;draw();});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+draw();
+}
+</script>
+</body>
+</html>
