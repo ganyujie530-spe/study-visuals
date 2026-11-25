@@ -40,6 +40,7 @@ Make one when a topic's scenario or logic is complex: something easier to unders
 - Highlight the single thing that changes in a step (amber `--hot` / `--hotline`). Moving pointers (like `temp`) use `--temp`.
 - Key points (bottom): 2–4 short rules worth remembering for the exam (why, order of operations, special cases).
 - The code must be correct. If the lecture slides contain a bug, use the corrected version.
+- Maths must be readable as maths, never raw text notation: write subscripts and superscripts with `<sub>` / `<sup>` in HTML (f<sub>x</sub>, e<sup>xy</sup>) and `<tspan baseline-shift="sub|super" font-size="...">` in SVG; use real symbols (−, ×, ÷, √, ≈, ⇒, Δ, ε₁). Not `f_x`, `e^(xy)`, `x^2`, `->`. For a panel of formulas instead of code, give the `<pre>` the `math` class (serif, wrapping) and set captions with `innerHTML`.
 
 ## Design and compatibility rules
 

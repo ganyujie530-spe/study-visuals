@@ -48,13 +48,15 @@ pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
 .ctl td+td{text-align:right}
 .ctl tr.err td{color:var(--hotline);font-weight:500}
 .ctl .note{grid-column:1/-1;margin:0;font-size:14px;color:var(--muted)}
+pre.math{font:17px/1.8 "Cambria Math","STIX Two Math","Times New Roman",serif;white-space:normal}
+pre.math div{white-space:pre-wrap}
 @media(max-width:700px){.ctl{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <header>
 <h1>Differentiable: the tangent plane's error shrinks faster than the step</h1>
-<p>BSC130 Calculus II B · Chapter 14.4 Tangent Planes and Linear Approximations (slides p.28–32). Example f(x, y) = x e^(xy) at (1, 0). Use the buttons or ← → keys; drag the sliders from step 4.</p>
+<p>BSC130 Calculus II B · Chapter 14.4 Tangent Planes and Linear Approximations (slides p.28–32). Example f(x, y) = xe<sup>xy</sup> at (1, 0). Use the buttons or ← → keys; drag the sliders from step 4.</p>
 </header>
 <main>
 <div class="fig"><svg id="pic" viewBox="0 0 680 300" role="img" aria-labelledby="ptitle"><title id="ptitle">Diagram for the current step</title></svg></div>
@@ -73,14 +75,14 @@ pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
 <p class="note">distance = √(Δx² + Δy²), how far the point moved from (1, 0).</p>
 </div>
 <div class="grid">
-<pre id="code"><div>f(x,y) = x e^(xy),   (a,b) = (1,0),   f(1,0) = 1</div><div>f_x = e^(xy) + xy e^(xy)      f_y = x² e^(xy)</div><div>f_x(1,0) = 1                  f_y(1,0) = 1</div><div>L(x,y) = f(a,b) + f_x(a,b)(x-a) + f_y(a,b)(y-b)</div><div>       = 1 + (x-1) + y  =  x + y</div><div>Δz = f(a+Δx, b+Δy) - f(a,b)        (surface)</div><div>dz = f_x(a,b) Δx + f_y(a,b) Δy     (plane)</div><div>Δz = dz + ε₁Δx + ε₂Δy,  ε₁, ε₂ → 0 as (Δx,Δy) → (0,0)</div><div>Theorem: f_x, f_y exist near (a,b) and are</div><div>   continuous at (a,b)  ⇒  f differentiable at (a,b)</div></pre>
+<pre id="code" class="math"><div>f(x, y) = xe<sup>xy</sup>,   (a, b) = (1, 0),   f(1, 0) = 1</div><div>f<sub>x</sub> = e<sup>xy</sup> + xye<sup>xy</sup>,     f<sub>y</sub> = x²e<sup>xy</sup></div><div>f<sub>x</sub>(1, 0) = 1,     f<sub>y</sub>(1, 0) = 1</div><div>L(x, y) = f(a, b) + f<sub>x</sub>(a, b)(x − a) + f<sub>y</sub>(a, b)(y − b)</div><div>           = 1 + (x − 1) + y = x + y</div><div>Δz = f(a + Δx, b + Δy) − f(a, b)     (surface)</div><div>dz = f<sub>x</sub>(a, b) Δx + f<sub>y</sub>(a, b) Δy     (plane)</div><div>Δz = dz + ε₁Δx + ε₂Δy,   ε₁, ε₂ → 0 as (Δx, Δy) → (0, 0)</div><div>Theorem: f<sub>x</sub>, f<sub>y</sub> exist near (a, b) and are</div><div>   continuous at (a, b)  ⇒  f is differentiable at (a, b)</div></pre>
 <div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
 </div>
 <div class="rules">
 <p><b>What "differentiable" means:</b> Δz = dz + ε₁Δx + ε₂Δy with ε₁, ε₂ → 0. The error is (small) × (small), so error ÷ distance → 0: the tangent plane fits the surface well near the point.</p>
-<p><b>Linearization = tangent plane:</b> L(x, y) = f(a,b) + f_x(a,b)(x−a) + f_y(a,b)(y−b). Near (a, b), f ≈ L. Here x e^(xy) ≈ x + y near (1, 0).</p>
-<p><b>To show differentiable:</b> find f_x and f_y, say they exist and are continuous at the point, then quote the theorem. A sufficient condition only: the reverse direction is not guaranteed.</p>
-<p><b>Two variables ≠ one variable:</b> partial derivatives existing alone do NOT give differentiability. You need the extra condition (e.g. continuity of f_x, f_y).</p>
+<p><b>Linearization = tangent plane:</b> L(x, y) = f(a,b) + f<sub>x</sub>(a, b)(x − a) + f<sub>y</sub>(a, b)(y − b). Near (a, b), f ≈ L. Here xe<sup>xy</sup> ≈ x + y near (1, 0).</p>
+<p><b>To show differentiable:</b> find f<sub>x</sub> and f<sub>y</sub>, say they exist and are continuous at the point, then quote the theorem. A sufficient condition only: the reverse direction is not guaranteed.</p>
+<p><b>Two variables ≠ one variable:</b> partial derivatives existing alone do NOT give differentiability. You need the extra condition (e.g. continuity of f<sub>x</sub>, f<sub>y</sub>).</p>
 </div>
 </main>
 <script>
@@ -88,15 +90,15 @@ pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
 // show: which parts to draw. surf = surface mesh, tan = tangent lines T1/T2 at P, plane = tangent plane,
 // move = moved point Q with Δx/Δy path, dz = plane's rise, dZ = surface's rise, err = gap between them.
 const steps=[
- {lines:[0],show:{surf:1},title:"The surface z = x e^(xy) and the point P",text:"The purple mesh is the graph of f. We study it near P = (1, 0, 1), because f(1, 0) = 1·e⁰ = 1."},
- {lines:[1,2],show:{surf:1,tan:1},title:"Slopes at P: f_x(1,0) = 1, f_y(1,0) = 1",text:"T₁ is the tangent in the x-direction (y fixed at 0), slope f_x(1,0) = 1. T₂ is the tangent in the y-direction (x fixed at 1), slope f_y(1,0) = 1. Along y = 0 the surface is z = x, so T₁ lies right on it."},
+ {lines:[0],show:{surf:1},title:"The surface z = xe<sup>xy</sup> and the point P",text:"The purple mesh is the graph of f. We study it near P = (1, 0, 1), because f(1, 0) = 1·e<sup>0</sup> = 1."},
+ {lines:[1,2],show:{surf:1,tan:1},title:"Slopes at P: f<sub>x</sub>(1, 0) = 1, f<sub>y</sub>(1, 0) = 1",text:"T₁ is the tangent in the x-direction (y fixed at 0), slope f<sub>x</sub>(1, 0) = 1. T₂ is the tangent in the y-direction (x fixed at 1), slope f<sub>y</sub>(1, 0) = 1. Along y = 0 the surface is z = x, so T₁ lies right on it."},
  {lines:[3,4],show:{surf:1,tan:1,plane:1},title:"The tangent plane L(x, y) = x + y",text:"The blue plane contains both tangent lines T₁ and T₂. Its equation is the linearization L(x, y) = 1 + (x−1) + y = x + y."},
  {lines:[5],show:{surf:1,plane:1,move:1,dZ:1},title:"Move to (1+Δx, Δy): the real change Δz",text:"Step Δx along x and Δy along y (the dashed path). The surface rises by Δz = f(1+Δx, Δy) − 1. Drag the sliders to move the point."},
  {lines:[6],show:{surf:1,plane:1,move:1,dZ:1,dz:1},title:"The plane's change dz",text:"Above the same point, the tangent plane rises only by dz = 1·Δx + 1·Δy. This is what the linear approximation predicts."},
  {lines:[7],show:{surf:1,plane:1,move:1,dZ:1,dz:1,err:1},title:"The gap is the error ε₁Δx + ε₂Δy",text:"Δz − dz is the amber gap between surface and plane. For a big step (0.4, 0.4) it is large: the plane is a poor guess far from P."},
  {lines:[7],show:{surf:1,plane:1,move:1,dZ:1,dz:1,err:1},title:"Shrink the step: error ÷ distance → 0",text:"Press 'Shrink step ×½' a few times. The distance halves each time, but the error drops by a factor of about 4 or more, so error ÷ distance goes to 0. That is exactly ε₁, ε₂ → 0: f is differentiable at (1, 0)."},
- {lines:[1,8,9],show:{surf:1,plane:1,move:1,dZ:1,dz:1,err:1},title:"The quick test: the theorem",text:"Checking ε₁, ε₂ by hand is hard. Instead: f_x = e^(xy) + xy e^(xy) and f_y = x² e^(xy) exist and are continuous everywhere, so by the theorem f is differentiable at (1, 0). Write this reason in the exam."},
- {lines:[3,4],show:{surf:1,plane:1,tan:1},title:"Result: x e^(xy) ≈ x + y near (1, 0)",text:"Because f is differentiable at (1, 0), its linearization L(x, y) = x + y is a good approximation for points close to (1, 0), and only there."}
+ {lines:[1,8,9],show:{surf:1,plane:1,move:1,dZ:1,dz:1,err:1},title:"The quick test: the theorem",text:"Checking ε₁, ε₂ by hand is hard. Instead: f<sub>x</sub> = e<sup>xy</sup> + xye<sup>xy</sup> and f<sub>y</sub> = x²e<sup>xy</sup> exist and are continuous everywhere, so by the theorem f is differentiable at (1, 0). Write this reason in the exam."},
+ {lines:[3,4],show:{surf:1,plane:1,tan:1},title:"Result: xe<sup>xy</sup> ≈ x + y near (1, 0)",text:"Because f is differentiable at (1, 0), its linearization L(x, y) = x + y is a good approximation for points close to (1, 0), and only there."}
 ];
 const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
 const dots=document.getElementById('dots');
@@ -144,7 +146,7 @@ function draw(){
   g+=pl([pt(0.5,0,0.5),pt(1.5,0,1.5)],'var(--ink)',2.2);
   g+=pl([pt(1,-0.5,0.5),pt(1,0.5,1.5)],'var(--ink)',2.2);
   const [a1,b1]=P(1.5,0,1.5),[a2,b2]=P(1,0.5,1.5);
-  g+=T(a1-10,b1+14,'T₁ (slope f_x = 1)',13,'var(--ink)','end',1)+T(a2+10,b2,'T₂ (slope f_y = 1)',13,'var(--ink)','start',1);
+  g+=T(a1-10,b1+14,'T₁ (slope f<tspan baseline-shift="sub" font-size="10">x</tspan> = 1)',13,'var(--ink)','end',1)+T(a2+10,b2,'T₂ (slope f<tspan baseline-shift="sub" font-size="10">y</tspan> = 1)',13,'var(--ink)','start',1);
  }
  if(sh.move){
   // path in the level z = f(1,0) = 1: P → (1+Δx, 0) → (1+Δx, Δy)
@@ -170,7 +172,7 @@ function draw(){
  if(sh.plane)lg.push(['var(--strip)','tangent plane z = L(x, y)']);
  if(sh.err)lg.push(['var(--hotline)','error = Δz − dz']);
  lg.forEach(([c,t],i)=>{const x=130+i*185;g+=`<rect x="${x}" y="276" width="14" height="14" rx="3" style="fill:${c}"/>`+T(x+20,283,t,13,'var(--muted)','start');});
- pic.innerHTML=`<title>${s.title}</title>`+g;
+ pic.innerHTML=`<title>${s.title.replace(/<[^>]+>/g,'')}</title>`+g;
  // controls and numbers
  ctl.style.display=sh.move?'':'none';
  const f2=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(2);
@@ -182,8 +184,8 @@ function draw(){
  document.getElementById('half-tab').innerHTML=`<tr><td>keep halving</td><td>distance</td><td>error</td><td>error ÷ dist.</td></tr>`+ht.join('');
  document.getElementById('num').innerHTML=rows.map((r,i)=>`<tr${i>=3?' class="err"':''}><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
  codeLines.forEach((d,n)=>d.classList.toggle('hl',s.lines.includes(n)));
- document.getElementById('ctitle').textContent=`${k+1}/${steps.length} · ${s.title}`;
- document.getElementById('ctext').textContent=s.text;
+ document.getElementById('ctitle').innerHTML=`${k+1}/${steps.length} · ${s.title}`;
+ document.getElementById('ctext').innerHTML=s.text;
  [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===k));
  document.getElementById('prev').disabled=k===0;
  document.getElementById('next').disabled=k===steps.length-1;
