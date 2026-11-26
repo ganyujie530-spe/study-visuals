@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inclusion–Exclusion: 000 or 111</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+/* Shared look for all study-visuals pages. Keep this block as it is.
+   Compatibility (Obsidian mobile uses an old engine): no light-dark(), no context-stroke,
+   var() colours only inside style="..." in SVG, never in fill=/stroke= attributes. */
+:root{color-scheme:light;--bg:#ffffff;--ink:#0d1222;--muted:#5a6278;--zone:#eef2ff;--line:#c9d2ec;--node:#ffffff;--temp:#5b4fd6;--hot:#fff1d6;--strip:#1240e0;--hotline:#d48a0c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0a0d18;--ink:#e6e9f5;--muted:#9aa3bd;--zone:#141a30;--line:#2a3456;--node:#10162a;--temp:#a69dff;--hot:#4a3207}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+header{background:var(--strip);color:#fff;padding:18px max(5vw,16px)}
+h1{font:600 clamp(24px,3.4vw,34px)/1.1 "Space Grotesk",Inter,sans-serif;margin:0}
+header p{margin:6px 0 0;opacity:.85;font-size:15px}
+main{max-width:1000px;margin:0 auto;padding:20px max(4vw,16px) 40px}
+.fig{background:var(--zone);border:1px solid var(--line);border-radius:10px;padding:8px}
+.fig svg{display:block;width:100%;height:auto}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+button{font:500 16px Inter,sans-serif;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:var(--node);color:var(--ink);cursor:pointer}
+button.primary{background:var(--strip);border-color:var(--strip);color:#fff}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible{outline:3px solid var(--temp);outline-offset:2px}
+.dots{display:flex;gap:6px;margin-left:auto}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--strip)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+pre{margin:0;background:var(--node);border:1px solid var(--line);border-radius:10px;padding:12px 0;overflow-x:auto;font:14px/1.7 "JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0}
+pre div{padding:0 14px;white-space:pre;border-left:4px solid transparent}
+pre div.hl{background:var(--hot);border-left-color:var(--hotline)}
+.cap{background:var(--node);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.cap h2{font:600 18px/1.3 "Space Grotesk",Inter,sans-serif;margin:0 0 6px}
+.cap p{margin:0}
+.rules{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-size:15px;color:var(--muted)}
+.rules b{color:var(--ink);font-weight:500}
+@media(max-width:700px){.grid{grid-template-columns:minmax(0,1fr)}.dots{margin-left:0}}
+pre.math{font:17px/1.8 "Cambria Math","STIX Two Math","Times New Roman",serif;white-space:normal}
+pre.math div{white-space:pre-wrap}
+pre.math code{font:15px "JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none}
+</style>
+</head>
+<body>
+<header>
+<h1>Inclusion–exclusion: 6-bit strings containing 000 or 111</h1>
+<p>BSC129 Discrete Mathematics · Topic 5 Counting, Week 9 slide 14. All 64 strings of length 6, counted case by case. Use the buttons or ← → keys.</p>
+</header>
+<main>
+<div class="fig"><svg id="pic" viewBox="0 0 680 425" role="img" aria-labelledby="ptitle"><title id="ptitle">Diagram for the current step</title></svg></div>
+<div class="bar">
+<button id="prev">Previous</button>
+<button id="next" class="primary">Next</button>
+<button id="reset">Restart</button>
+<div class="dots" id="dots"></div>
+</div>
+<div class="grid">
+<pre id="code" class="math"><div>A = strings with 000,   B = strings with 111</div><div>|A ∪ B| = |A| + |B| − |A ∩ B|</div><div>Split A by where the first 000 starts:</div><div>  start 1:   <code>000xxx</code>    2<sup>3</sup> = 8</div><div>  start 2:   <code>1000xx</code>    2<sup>2</sup> = 4</div><div>  start 3:   <code>x1000x</code>    2 × 2 = 4</div><div>  start 4:   <code>xx1000</code>    2<sup>2</sup> = 4</div><div>|A| = 8 + 4 + 4 + 4 = 20</div><div>Swap 0 ↔ 1:   |B| = |A| = 20</div><div>A ∩ B = {<code>000111</code>, <code>111000</code>},   |A ∩ B| = 2</div><div>|A ∪ B| = 20 + 20 − 2 = 38</div></pre>
+<div class="cap" aria-live="polite"><h2 id="ctitle"></h2><p id="ctext"></p></div>
+</div>
+<div class="rules">
+<p><b>Split by the first 000:</b> every string in A falls into exactly one case, so the four cases can simply be added (sum rule).</p>
+<p><b>The bit just before the run is forced to 1:</b> if it were 0, the 000 would start one place earlier and the string would belong to an earlier case.</p>
+<p><b>Counting "a 000 at position i" overcounts:</b> 4 × 8 = 32, not 20, because strings like 000000 contain 000 more than once.</p>
+<p><b>Use symmetry and check the length:</b> swapping 0 ↔ 1 gives |B| = |A|; A ∩ B needs 3 + 3 = 6 bits, so only 000111 and 111000.</p>
+</div>
+</main>
+<script>
+{
+const ALL=[...Array(64)].map((_,v)=>v.toString(2).padStart(6,'0'));
+const starts=(s,r)=>[0,1,2,3].filter(i=>s.slice(i,i+3)===r);
+const firstA=s=>{const a=starts(s,'000');return a.length?a[0]:-1;};
+const firstB=s=>{const b=starts(s,'111');return b.length?b[0]:-1;};
+// Each step: lines (0-based #code lines), pat (case pattern shown in boxes, or null), tally (SVG text), mode(s) -> [style, runStarts, runChar].
+// Styles: plain, known (counted earlier), hot (new in this step), b (in B), dim.
+const caseMode=c=>s=>{const f=firstA(s);if(f<0||f>c)return ['plain'];return [f===c?'hot':'known',[f],'000'];};
+const unionMode=s=>{const a=firstA(s)>=0,b=firstB(s)>=0;if(a&&b)return ['hot',[firstA(s),firstB(s)],'both'];if(a)return ['known',[firstA(s)],'000'];if(b)return ['b',[firstB(s)],'111'];return ['plain'];};
+const sup=t=>`<tspan baseline-shift="super" font-size="11">${t}</tspan>`;
+const steps=[
+ {lines:[0,1],pat:null,tally:`64 strings in total (2${sup(6)} = 64)`,mode:()=>['plain'],
+  title:"All 2<sup>6</sup> = 64 strings",text:"Each cell is one bit string of length 6, in binary order. A = strings that contain 000, B = strings that contain 111. We want |A ∪ B| = |A| + |B| − |A ∩ B|."},
+ {lines:[2,3],pat:'000xxx',tally:`|A| so far: 8`,mode:caseMode(0),
+  title:"Case 1: the first 000 starts at position 1",text:"Pattern 000xxx: positions 1–3 are fixed as 000 and positions 4–6 are free, so there are 2<sup>3</sup> = 8 strings."},
+ {lines:[4],pat:'1000xx',tally:`|A| so far: 8 + 4 = 12`,mode:caseMode(1),
+  title:"Case 2: the first 000 starts at position 2",text:"Pattern 1000xx. Position 1 must be 1: if it were 0, positions 1–3 would already be 000 and the string would be in case 1. Two free bits give 2<sup>2</sup> = 4."},
+ {lines:[5],pat:'x1000x',tally:`|A| so far: 8 + 4 + 4 = 16`,mode:caseMode(2),
+  title:"Case 3: the first 000 starts at position 3",text:"Pattern x1000x. Position 2 must be 1, otherwise 000 would start at position 2. Then no 000 can start at position 1 either. Positions 1 and 6 are free: 2 × 2 = 4."},
+ {lines:[6,7],pat:'xx1000',tally:`|A| = 8 + 4 + 4 + 4 = 20`,mode:caseMode(3),
+  title:"Case 4: the first 000 starts at position 4",text:"Pattern xx1000. Position 3 must be 1, otherwise 000 would start earlier. Positions 1–2 are free: 4 strings. All of A is now counted: |A| = 20."},
+ {lines:[2],pat:null,tally:`"000 at position i": 4 × 8 = 32 ≠ 20`,mode:s=>{const a=starts(s,'000');if(!a.length)return ['plain'];return [a.length>1?'hot':'known',a,'000'];},
+  hotLabel:'000 appears 2+ times',title:"Why classify by the first 000?",text:"000 can appear more than once: 000000 contains it starting at positions 1, 2, 3 and 4. Counting \"a 000 starts at position i\" for each i gives 4 × 8 = 32, which counts the 8 highlighted strings several times. Using the first 000 counts each string once."},
+ {lines:[8],pat:null,tally:`|B| = |A| = 20`,mode:s=>{const f=firstB(s);return f<0?['plain']:['hot',[f],'111'];},
+  hotLabel:'in B (has 111)',title:"|B| by swapping 0 ↔ 1",text:"Swapping every 0 and 1 turns a string with 000 into a string with 111, and back. This is a bijection between A and B, so |B| = |A| = 20 without counting again."},
+ {lines:[9],pat:null,tally:`|A ∩ B| = 2`,mode:unionMode,
+  hotLabel:'in A ∩ B',title:"A ∩ B: strings with both 000 and 111",text:"The two runs need 3 + 3 = 6 different positions, which is the whole string. Only 000111 and 111000 work, so |A ∩ B| = 2. They are in both groups."},
+ {lines:[10,1],pat:null,tally:`|A ∪ B| = 20 + 20 − 2 = 38`,mode:unionMode,
+  hotLabel:'in A ∩ B',title:"Inclusion–exclusion: 38 strings",text:"|A| + |B| counts 000111 and 111000 twice, so subtract them once: 20 + 20 − 2 = 38. The 26 grey strings contain neither 000 nor 111 (64 − 38 = 26)."}
+];
+const pic=document.getElementById('pic'),codeLines=[...document.querySelectorAll('#code div')];
+const dots=document.getElementById('dots');
+dots.innerHTML=steps.map(()=>'<span></span>').join('');
+let k=0;
+const T=(x,y,t,sz,c,anc,wt)=>`<text x="${x}" y="${y}" text-anchor="${anc||'middle'}" dominant-baseline="central" font-size="${sz||14}" ${wt?'font-weight="500"':''} style="fill:${c||'var(--ink)'}">${t}</text>`;
+const MONO='font-family:JetBrains Mono,ui-monospace,monospace;';
+const STY={plain:['var(--node)','var(--line)',1,'var(--muted)'],known:['var(--strip)','var(--strip)',1,'#ffffff'],hot:['var(--hot)','var(--hotline)',2.5,'var(--ink)'],b:['var(--node)','var(--temp)',2.5,'var(--ink)']};
+function cell(x,y,w,h,s,m){
+ const [fill,stroke,sw,tc]=STY[m[0]];
+ let g=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" style="fill:${fill};stroke:${stroke}" stroke-width="${sw}"/>`;
+ const inRun=new Array(6).fill(false);
+ if(m[1])for(const st of m[1])for(let j=st;j<st+3;j++)inRun[j]=true;
+ const chars=[...s].map((ch,j)=>m[0]==='plain'?ch:`<tspan style="${inRun[j]?'font-weight:700':'opacity:.5'}">${ch}</tspan>`).join('');
+ return g+`<text x="${x+w/2}" y="${y+h/2}" text-anchor="middle" dominant-baseline="central" font-size="15" style="${MONO}fill:${tc}">${chars}</text>`;
+}
+function draw(){
+ const s=steps[k];
+ const narrow=pic.parentNode.clientWidth<520;
+ const L=narrow?{W:360,H:756,cols:4,x0:9,cs:86,cw:80,y0:120,rs:36,bx:12,bs:40,bw:34,ty:96,tx:12,leg:[[12,714],[190,714],[12,738]]}
+               :{W:680,H:425,cols:8,x0:13,cs:82,cw:76,y0:96,rs:36,bx:24,bs:42,bw:36,ty:58,tx:300,leg:[[24,404],[220,404],[410,404]]};
+ pic.setAttribute('viewBox',`0 0 ${L.W} ${L.H}`);
+ let g='';
+ // pattern boxes for the current case
+ if(s.pat){
+  g+=T(L.bx,10,'position',11,'var(--muted)','start');
+  [...s.pat].forEach((ch,j)=>{
+   const x=L.bx+j*L.bs,y=40;
+   const run=ch==='0',free=ch==='x';
+   const st=run?'fill:var(--hot);stroke:var(--hotline)':free?'fill:var(--node);stroke:var(--line)':'fill:var(--node);stroke:var(--temp)';
+   g+=T(x+L.bw/2,y-10,j+1,11,'var(--muted)');
+   g+=`<rect x="${x}" y="${y}" width="${L.bw}" height="${L.bw}" rx="5" style="${st}" stroke-width="${run||!free?2:1}"/>`;
+   g+=`<text x="${x+L.bw/2}" y="${y+L.bw/2}" text-anchor="middle" dominant-baseline="central" font-size="17" style="${MONO}fill:${free?'var(--muted)':ch==='1'?'var(--temp)':'var(--ink)'}">${ch}</text>`;
+  });
+ }
+ g+=T(L.tx,narrow&&!s.pat?50:L.ty,s.tally,narrow?15:16,'var(--ink)','start',1);
+ ALL.forEach((str,v)=>{
+  const c=v%L.cols,r=Math.floor(v/L.cols);
+  g+=cell(L.x0+c*L.cs,L.y0+r*L.rs,L.cw,30,str,s.mode(str));
+ });
+ const leg=[['var(--hot)','var(--hotline)',s.hotLabel||'new in this step'],['var(--strip)','var(--strip)','counted (in A)'],['var(--node)','var(--temp)','in B only (has 111)']];
+ leg.forEach(([f,st,t],i)=>{const [x,y]=L.leg[i];g+=`<rect x="${x}" y="${y-7}" width="14" height="14" rx="3" style="fill:${f};stroke:${st}" stroke-width="2"/>`+T(x+20,y,t,13,'var(--muted)','start');});
+ pic.innerHTML=`<title>${s.title.replace(/<[^>]+>/g,'')}</title>`+g;
+ codeLines.forEach((d,n)=>d.classList.toggle('hl',s.lines.includes(n)));
+ document.getElementById('ctitle').innerHTML=`${k+1}/${steps.length} · ${s.title}`;
+ document.getElementById('ctext').innerHTML=s.text;
+ [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===k));
+ document.getElementById('prev').disabled=k===0;
+ document.getElementById('next').disabled=k===steps.length-1;
+}
+const go=d=>{k=Math.max(0,Math.min(steps.length-1,k+d));draw();};
+document.getElementById('prev').addEventListener('click',()=>go(-1));
+document.getElementById('next').addEventListener('click',()=>go(1));
+document.getElementById('reset').addEventListener('click',()=>{k=0;draw();});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+window.addEventListener('resize',draw);
+draw();
+}
+</script>
+</body>
+</html>
